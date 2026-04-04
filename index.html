@@ -7,35 +7,90 @@
   <style>
     body {
       margin: 0;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       background: #111;
       font-family: sans-serif;
       color: white;
     }
-    a {
-      text-decoration: none;
-    }
-    img {
+    #ar-link img {
       width: 100%;
-      max-width: 400px;
+      max-width: 380px;
       border-radius: 12px;
       display: block;
     }
+    #ar-link { text-decoration: none; }
     p {
       margin-top: 16px;
-      font-size: 14px;
-      opacity: 0.6;
+      font-size: 13px;
+      opacity: 0.5;
+      text-align: center;
+      padding: 0 24px;
+    }
+    #no-ar {
+      display: none;
+      max-width: 380px;
+      text-align: center;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
     }
   </style>
 </head>
 <body>
-  <a rel="ar" href="laescucha.usdz">
-    <img src="preview.png" alt="Tocar para ver en AR">
+
+<div id="ios-ar">
+  <a id="ar-link" rel="ar" href="escena.usdz">
+    <img src="preview.jpg" alt="Ver en AR">
   </a>
-  <p>Abrí desde Safari en iPhone para ver en RA</p>
+  <p>Tocá la imagen para ver en Realidad Aumentada</p>
+</div>
+
+<div id="android-ar">
+  <a id="ar-link-android" href="#">
+    <img src="preview.jpg" alt="Ver en AR">
+  </a>
+  <p>Tocá la imagen para ver en Realidad Aumentada</p>
+</div>
+
+<div id="no-ar">
+  <p>Esta experiencia está disponible desde iPhone o Android.</p>
+</div>
+
+<script>
+  const BASE_URL = "https://lean-n.github.io/LaEscucha";
+  const GLB_FILE = BASE_URL + "/escena.glb";
+  const FALLBACK = BASE_URL;
+
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/.test(ua);
+  const isAndroid = /Android/.test(ua);
+
+  document.getElementById("ios-ar").style.display = "none";
+  document.getElementById("android-ar").style.display = "none";
+  document.getElementById("no-ar").style.display = "none";
+
+  if (isIOS) {
+    document.getElementById("ios-ar").style.display = "block";
+  } else if (isAndroid) {
+    document.getElementById("android-ar").style.display = "block";
+    const intent =
+      "intent://arvr.google.com/scene-viewer/1.0" +
+      "?file=" + encodeURIComponent(GLB_FILE) +
+      "&mode=ar_preferred" +
+      "#Intent;scheme=https;" +
+      "package=com.google.android.googlequicksearchbox;" +
+      "action=android.intent.action.VIEW;" +
+      "S.browser_fallback_url=" + encodeURIComponent(FALLBACK) +
+      ";end";
+    document.getElementById("ar-link-android").href = intent;
+  } else {
+    document.getElementById("no-ar").style.display = "block";
+  }
+</script>
+
 </body>
 </html>
